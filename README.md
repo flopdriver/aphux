@@ -1,60 +1,78 @@
 # Aphex Soundscape
 
-An interactive web-based synthesizer inspired by Aphex Twin's aesthetic for creating experimental soundscapes.
+A modular, interactive web-based synthesizer with visual feedback and experimental audio features.
 
 ## Features
 
-- **3 Oscillators**: Control frequency and waveform type (sine, square, sawtooth, triangle)
-- **Modulation**: 2 LFOs with adjustable frequency and depth
-- **Effects**: 
-  - Delay with time and feedback controls
-  - Filter with frequency and resonance controls
-  - Distortion with amount control
-  - Reverb with mix control
-- **Chaos Matrix**: 8x8 grid of cells that introduce random variations to the sound
-- **Visualizer**: Real-time frequency and waveform visualization
-- **Special Controls**:
-  - Randomize: Generate random settings for oscillators and filter
-  - Glitch: Create temporary glitchy effects
-  - Save Preset: Export your current settings as a JSON file
+- Three oscillators with customizable waveforms and frequencies
+- Two LFOs (Low Frequency Oscillators) that can be assigned to modulate oscillators or filter
+- Audio effect chain including delay, filter, distortion, and reverb
+- Real-time audio visualization
+- Chaos Matrix for random audio manipulation
+- Preset system to save and load your favorite configurations
 
-## How to Use
+## Architecture
 
-1. Open `index.html` in a web browser (Chrome recommended for best Web Audio API support)
-2. Click anywhere on the page to initialize audio (browser security requires user interaction)
-3. Use the sliders, switches, and buttons to craft your soundscape
-4. Experiment with the Chaos Matrix by clicking individual cells to add randomness
-5. Try the Randomize and Glitch buttons for unexpected sonic results
-6. Save your favorite settings using the Save Preset button
+The application follows a modular architecture to allow for easy maintenance and future enhancements:
 
-## UI Overview
+```
+aphex-soundscape/
+├── src/
+│   ├── main.js                 # Application entry point
+│   ├── styles.css              # Global styles
+│   ├── modules/
+│   │   ├── AudioCore.js        # Core audio context management
+│   │   ├── OscillatorManager.js # Oscillator creation and control
+│   │   ├── ModulationManager.js # LFO creation and routing
+│   │   ├── EffectsChain.js     # Audio effects processing
+│   │   ├── Visualizer.js       # Canvas visualization
+│   │   ├── ChaosMatrix.js      # Randomization features
+│   │   ├── UIController.js     # User interface interactions
+│   │   └── StateManager.js     # State management (optional)
+│   └── utils/
+│       └── audioUtils.js       # Utility functions for audio processing
+```
 
-- **Oscillators Panel**: Control the basic sound generators
-- **Modulation Panel**: Add movement and variation to parameters
-- **Effects Panel**: Shape and process the sound
-- **Master Panel**: Control overall volume and reverb
-- **Chaos Matrix**: Add controlled randomness to the sound
-- **Visualizer**: See a representation of the sound in real-time
+## Getting Started
 
-## Aphex Twin Influence
+### Prerequisites
 
-The interface design and sound capabilities draw inspiration from Aphex Twin's approach to electronic music, featuring:
+- A modern web browser with Web Audio API support (Chrome, Firefox, Safari, Edge)
 
-- Complex, experimental sound design possibilities
-- Glitchy, unpredictable elements
-- Visual aesthetic with bold colors and minimal design
-- Ability to create both beautiful ambient textures and harsh noise
+### Development Setup
 
-## Technical Details
+1. Clone the repository:
+```bash
+git clone https://github.com/flopdriver/aphux.git
+cd aphex-soundscape
+```
 
-Built using:
-- HTML5
-- CSS3
-- JavaScript
-- Web Audio API
+2. Install dependencies:
+```bash
+npm install
+```
 
-No external libraries or frameworks required.
+3. Start the development server:
+```bash
+npm run dev
+```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+## Usage
+
+1. Click the "START AUDIO" button to initialize the audio engine
+2. Adjust oscillator settings (frequency, waveform, active state)
+3. Assign LFOs to modulate oscillators or the filter
+4. Experiment with the effect chain
+5. Use the Chaos Matrix by clicking on cells to introduce randomness
+6. Save your presets with the "SAVE PRESET" button
 
 ## License
 
-Feel free to use, modify, and share as you wish.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Inspired by modular synthesizers and experimental electronic music
+- Built with the Web Audio API

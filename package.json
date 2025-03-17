@@ -1,0 +1,27 @@
+{
+  "name": "aphux",
+  "version": "0.1.0",
+  "description": "A modular web-based synthesizer with visual audio manipulation",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "start": "http-server -c-1 -p 8080",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "synthesizer",
+    "web audio",
+    "music",
+    "effects",
+    "visualization"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.25.1",
+    "http-server": "^14.1.1",
+    "vite": "^6.2.2"
+  }
+}
