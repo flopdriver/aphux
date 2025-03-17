@@ -80,8 +80,6 @@ export class ChaosMatrix {
     }
 
     // Randomize settings
-    // Randomize settings
-    // Randomize settings
     randomizeSettings() {
         console.log("Randomizing settings...");
         const audioCtx = this.audioCore.getAudioContext();
@@ -136,14 +134,18 @@ export class ChaosMatrix {
             // Random LFO depth between 10 and 100%
             const randomLfoDepth = Math.floor(Math.random() * 90 + 10);
 
-            // Update LFO parameters using global reference
-            // We access the modulationManager through the global variable set in main.js
+            // Update LFO parameters using global reference, but preserve active state
             if (window._modulationManager) {
+                // Get current state to preserve active status
+                const currentLfoState = window._modulationManager.getState().lfos[i];
+
                 window._modulationManager.updateLfoFrequency(i, randomLfoFreq);
                 window._modulationManager.updateLfoDepth(i, randomLfoDepth, this.effectsChain.getFilter());
+
+                // Keep existing active state (don't change it during randomization)
             }
 
-            // Update UI sliders
+            // Update UI sliders but not switch
             const freqSlider = document.getElementById(`lfo${i}-freq`);
             const depthSlider = document.getElementById(`lfo${i}-depth`);
 
@@ -160,6 +162,8 @@ export class ChaosMatrix {
                     depthSlider.nextElementSibling.textContent = `${randomLfoDepth}%`;
                 }
             }
+
+            // Don't touch the active switch - let it be controlled only by user
         }
 
         // Randomize filter
