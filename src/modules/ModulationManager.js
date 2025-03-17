@@ -106,6 +106,7 @@ export class ModulationManager {
         return 0;
     }
 
+    // This updated connectLFOs method respects the active state of each LFO
     // Connect LFOs to their targets
     connectLFOs(filter) {
         try {
@@ -119,7 +120,9 @@ export class ModulationManager {
                 JSON.stringify({
                     osc1: { lfo1: oscillatorState[1].lfo1Target, lfo2: oscillatorState[1].lfo2Target },
                     osc2: { lfo1: oscillatorState[2].lfo1Target, lfo2: oscillatorState[2].lfo2Target },
-                    osc3: { lfo1: oscillatorState[3].lfo1Target, lfo2: oscillatorState[3].lfo2Target }
+                    osc3: { lfo1: oscillatorState[3].lfo1Target, lfo2: oscillatorState[3].lfo2Target },
+                    lfo1_active: this.state.lfos[1].active,
+                    lfo2_active: this.state.lfos[2].active
                 }));
 
             // Clear previous gain node references
@@ -143,8 +146,8 @@ export class ModulationManager {
                 }
             }
 
-            // Connect LFO 1 to its targets
-            if (this.nodes.lfos[1] && this.nodes.lfos[1].gainNode) {
+            // Connect LFO 1 to its targets, but ONLY if it's active
+            if (this.nodes.lfos[1] && this.nodes.lfos[1].gainNode && this.state.lfos[1].active) {
                 let connectedLFO1 = false;
 
                 // Check each oscillator to see if it's targeted by LFO 1
@@ -195,10 +198,12 @@ export class ModulationManager {
                         console.warn("Failed to connect LFO 1 to filter:", e);
                     }
                 }
+            } else {
+                console.log("LFO 1 is inactive, not connecting to targets");
             }
 
-            // Connect LFO 2 to its targets
-            if (this.nodes.lfos[2] && this.nodes.lfos[2].gainNode) {
+            // Connect LFO 2 to its targets, but ONLY if it's active
+            if (this.nodes.lfos[2] && this.nodes.lfos[2].gainNode && this.state.lfos[2].active) {
                 let connectedLFO2 = false;
 
                 // Check each oscillator to see if it's targeted by LFO 2
@@ -248,6 +253,8 @@ export class ModulationManager {
                         console.warn("Failed to connect LFO 2 to filter:", e);
                     }
                 }
+            } else {
+                console.log("LFO 2 is inactive, not connecting to targets");
             }
         } catch (e) {
             console.error("Error in connectLFOs:", e);

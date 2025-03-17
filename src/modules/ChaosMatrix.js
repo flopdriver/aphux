@@ -126,6 +126,46 @@ export class ChaosMatrix {
             this.updateLFOButtonState(lfo2Button, lfo2Target, 'secondary');
         }
 
+        // Randomize LFOs
+        for (let i = 1; i <= 2; i++) {
+            // Random LFO frequency between 0.1 and 20 Hz
+            const randomLfoFreq = Math.random() * 19.9 + 0.1;
+
+            // Random LFO depth between 10 and 100%
+            const randomLfoDepth = Math.floor(Math.random() * 90 + 10);
+
+            // Update LFO parameters using global reference, but preserve active state
+            if (window._modulationManager) {
+                // Get current state to preserve active status
+                const currentLfoState = window._modulationManager.getState().lfos[i];
+
+                window._modulationManager.updateLfoFrequency(i, randomLfoFreq);
+                window._modulationManager.updateLfoDepth(i, randomLfoDepth, this.effectsChain.getFilter());
+
+                // Keep existing active state (don't change it during randomization)
+            }
+
+            // Update UI sliders but not switch
+            const freqSlider = document.getElementById(`lfo${i}-freq`);
+            const depthSlider = document.getElementById(`lfo${i}-depth`);
+
+            if (freqSlider) {
+                freqSlider.value = randomLfoFreq;
+                if (freqSlider.nextElementSibling) {
+                    freqSlider.nextElementSibling.textContent = `${randomLfoFreq.toFixed(1)} Hz`;
+                }
+            }
+
+            if (depthSlider) {
+                depthSlider.value = randomLfoDepth;
+                if (depthSlider.nextElementSibling) {
+                    depthSlider.nextElementSibling.textContent = `${randomLfoDepth}%`;
+                }
+            }
+
+            // Don't touch the active switch - let it be controlled only by user
+        }
+
         // Randomize filter
         const randomFilterFreq = Math.random() * 10000 + 100;
         const filterFreqSlider = document.getElementById('filter-freq');
