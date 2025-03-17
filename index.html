@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aphex Soundscape</title>
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>APHEX SOUNDSCAPE</h1>
+      <div class="logo">ᴀ◊ᴛ</div>
+    </header>
+    
+    <div class="visualizer-container">
+      <canvas id="visualizer"></canvas>
+    </div>
+    
+    <div class="interface">
+      <div class="panel oscillators">
+        <h2>Oscillators</h2>
+        <div class="control-row">
+          <div class="control">
+            <label>OSC 1</label>
+            <input type="range" min="20" max="880" value="110" class="slider" id="osc1-freq">
+            <span class="value">110 Hz</span>
+            <div class="waveform-selector">
+              <button class="active" data-wave="sine" data-osc="1">∿</button>
+              <button data-wave="square" data-osc="1">⊓</button>
+              <button data-wave="sawtooth" data-osc="1">⋀</button>
+              <button data-wave="triangle" data-osc="1">△</button>
+            </div>
+          </div>
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" id="osc1-active" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="control-row">
+          <div class="control">
+            <label>OSC 2</label>
+            <input type="range" min="20" max="880" value="220" class="slider" id="osc2-freq">
+            <span class="value">220 Hz</span>
+            <div class="waveform-selector">
+              <button class="active" data-wave="sine" data-osc="2">∿</button>
+              <button data-wave="square" data-osc="2">⊓</button>
+              <button data-wave="sawtooth" data-osc="2">⋀</button>
+              <button data-wave="triangle" data-osc="2">△</button>
+            </div>
+          </div>
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" id="osc2-active" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="control-row">
+          <div class="control">
+            <label>OSC 3</label>
+            <input type="range" min="20" max="880" value="440" class="slider" id="osc3-freq">
+            <span class="value">440 Hz</span>
+            <div class="waveform-selector">
+              <button class="active" data-wave="sine" data-osc="3">∿</button>
+              <button data-wave="square" data-osc="3">⊓</button>
+              <button data-wave="sawtooth" data-osc="3">⋀</button>
+              <button data-wave="triangle" data-osc="3">△</button>
+            </div>
+          </div>
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" id="osc3-active" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel modulation">
+        <h2>Modulation</h2>
+        <div class="control-row">
+          <div class="control">
+            <label>LFO 1</label>
+            <input type="range" min="0.1" max="20" value="1" step="0.1" class="slider" id="lfo1-freq">
+            <span class="value">1 Hz</span>
+          </div>
+          <div class="control">
+            <label>Depth</label>
+            <input type="range" min="0" max="100" value="50" class="slider" id="lfo1-depth">
+            <span class="value">50%</span>
+          </div>
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" id="lfo1-active" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="control-row">
+          <div class="control">
+            <label>LFO 2</label>
+            <input type="range" min="0.1" max="20" value="0.5" step="0.1" class="slider" id="lfo2-freq">
+            <span class="value">0.5 Hz</span>
+          </div>
+          <div class="control">
+            <label>Depth</label>
+            <input type="range" min="0" max="100" value="30" class="slider" id="lfo2-depth">
+            <span class="value">30%</span>
+          </div>
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" id="lfo2-active" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel effects">
+        <h2>Effects</h2>
+        <div class="control-row">
+          <div class="control">
+            <label>Delay</label>
+            <input type="range" min="0" max="1" value="0.3" step="0.01" class="slider" id="delay-time">
+            <span class="value">0.3s</span>
+          </div>
+          <div class="control">
+            <label>Feedback</label>
+            <input type="range" min="0" max="0.9" value="0.4" step="0.01" class="slider" id="delay-feedback">
+            <span class="value">0.4</span>
+          </div>
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" id="delay-active" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="control-row">
+          <div class="control">
+            <label>Filter</label>
+            <input type="range" min="20" max="20000" value="2000" class="slider" id="filter-freq">
+            <span class="value">2000 Hz</span>
+          </div>
+          <div class="control">
+            <label>Resonance</label>
+            <input type="range" min="0" max="30" value="5" class="slider" id="filter-q">
+            <span class="value">5</span>
+          </div>
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" id="filter-active" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="control-row">
+          <div class="control">
+            <label>Distortion</label>
+            <input type="range" min="0" max="100" value="20" class="slider" id="distortion-amount">
+            <span class="value">20%</span>
+          </div>
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" id="distortion-active">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel master">
+        <h2>Master</h2>
+        <div class="control-row">
+          <div class="control">
+            <label>Volume</label>
+            <input type="range" min="0" max="1" value="0.7" step="0.01" class="slider" id="master-volume">
+            <span class="value">70%</span>
+          </div>
+          <div class="control">
+            <label>Reverb</label>
+            <input type="range" min="0" max="1" value="0.3" step="0.01" class="slider" id="reverb-amount">
+            <span class="value">30%</span>
+          </div>
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" id="reverb-active" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="panel chaos">
+        <h2>Chaos Matrix</h2>
+        <div class="grid-container">
+          <div class="grid" id="chaos-grid">
+            <!-- Grid will be generated by JS -->
+          </div>
+        </div>
+        <div class="control-row">
+          <button id="randomize-btn">RANDOMIZE</button>
+          <button id="glitch-btn">GLITCH</button>
+          <button id="save-preset-btn">SAVE PRESET</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="src/app.js"></script>
+  <script src="tests.js"></script>
+</body>
+</html>
