@@ -3,7 +3,7 @@ import { AudioCore } from './modules/AudioCore.js';
 import { OscillatorManager } from './modules/OscillatorManager.js';
 import { ModulationManager } from './modules/ModulationManager.js';
 import { EffectsChain } from './modules/EffectsChain.js';
-import { Visualizer } from './modules/Visualizer.js';
+import { VisualizerCore } from './modules/visualization/VisualizerCore.js';
 import { ChaosMatrix } from './modules/ChaosMatrix.js';
 import { UIController } from './modules/UIController.js';
 import { StateManager } from './modules/StateManager.js';
@@ -120,14 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
       chaosMatrix
   );
 
-  // Initialize visualizer after all modules
-  const visualizer = new Visualizer(
-      audioCore,
-      oscillatorManager,
-      modulationManager,
-      effectsChain,
-      chaosMatrix
-  );
+  // Initialize visualization after all modules
+  const visualizer = new VisualizerCore(audioCore, oscillatorManager, modulationManager, effectsChain, chaosMatrix);
 
   // Register modules with state manager (optional for future enhancements)
   stateManager.registerModule('audioCore', audioCore);
@@ -138,13 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
   stateManager.registerModule('chaosMatrix', chaosMatrix);
   stateManager.registerModule('uiController', uiController);
 
+  // Setup visualization toggle buttons
+  setupVisualizerToggles(visualizer);
+
   // Initialize UI components
   chaosMatrix.initChaosMatrix();
   visualizer.initVisualizer();
   uiController.createLFOTargetSelectors();
   uiController.setupEventListeners();
 
-  // Handle window resize for visualizer
+  // Handle window resize for visualization
   window.addEventListener('resize', () => {
     visualizer.handleResize();
   });
@@ -194,3 +191,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   console.log('Aphex Soundscape initialization complete');
 });
+
+// Function to setup visualization toggle buttons
+function setupVisualizerToggles(visualizer) {
+  const toggles = {
+    'toggle-background': 'drawBackground',
+    'toggle-spectrum': 'drawSpectrum',
+    'toggle-waveform': 'drawWaveform',
+    'toggle-particles': 'drawParticles',
+    'toggle-exotic-patterns': 'drawExoticPatterns',
+    'toggle-aphex-logo': 'drawLogo'
+  };
+
+  Object.entries(toggles).forEach(([buttonId, methodName]) => {
+    const button = document.getElementById(buttonId);
+    if (button) {
+      button.addEventListener('click', () => {
+        // Toggle active class
+        button.classList.toggle('active');
+
+        // Update visualization visibility setting
+        visualizer.toggleVisualizerElement(methodName, button.classList.contains('active'));
+      });
+    }
+  });
+}
