@@ -80,6 +80,8 @@ export class ChaosMatrix {
     }
 
     // Randomize settings
+    // Randomize settings
+    // Randomize settings
     randomizeSettings() {
         console.log("Randomizing settings...");
         const audioCtx = this.audioCore.getAudioContext();
@@ -124,6 +126,40 @@ export class ChaosMatrix {
 
             this.updateLFOButtonState(lfo1Button, lfo1Target, 'primary');
             this.updateLFOButtonState(lfo2Button, lfo2Target, 'secondary');
+        }
+
+        // Randomize LFOs
+        for (let i = 1; i <= 2; i++) {
+            // Random LFO frequency between 0.1 and 20 Hz
+            const randomLfoFreq = Math.random() * 19.9 + 0.1;
+
+            // Random LFO depth between 10 and 100%
+            const randomLfoDepth = Math.floor(Math.random() * 90 + 10);
+
+            // Update LFO parameters using global reference
+            // We access the modulationManager through the global variable set in main.js
+            if (window._modulationManager) {
+                window._modulationManager.updateLfoFrequency(i, randomLfoFreq);
+                window._modulationManager.updateLfoDepth(i, randomLfoDepth, this.effectsChain.getFilter());
+            }
+
+            // Update UI sliders
+            const freqSlider = document.getElementById(`lfo${i}-freq`);
+            const depthSlider = document.getElementById(`lfo${i}-depth`);
+
+            if (freqSlider) {
+                freqSlider.value = randomLfoFreq;
+                if (freqSlider.nextElementSibling) {
+                    freqSlider.nextElementSibling.textContent = `${randomLfoFreq.toFixed(1)} Hz`;
+                }
+            }
+
+            if (depthSlider) {
+                depthSlider.value = randomLfoDepth;
+                if (depthSlider.nextElementSibling) {
+                    depthSlider.nextElementSibling.textContent = `${randomLfoDepth}%`;
+                }
+            }
         }
 
         // Randomize filter
