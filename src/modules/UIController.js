@@ -81,18 +81,6 @@ export class UIController {
                     this.modulationManager.initLFOs();
                     this.effectsChain.initEffects();
 
-                    // Direct test - make sure we can hear something
-                    const audioCtx = this.audioCore.getAudioContext();
-                    const testOsc = audioCtx.createOscillator();
-                    const testGain = audioCtx.createGain();
-                    testGain.gain.value = 0.2;
-                    testOsc.connect(testGain);
-                    testGain.connect(audioCtx.destination);
-                    testOsc.frequency.value = 440;
-                    testOsc.start();
-                    testOsc.stop(audioCtx.currentTime + 0.5);
-                    console.log("Test tone played directly");
-
                     // Connect oscillators to filter
                     console.log("Connecting oscillators to filter...");
                     this.oscillatorManager.connectOscillatorsTo(this.effectsChain.getFilter());
