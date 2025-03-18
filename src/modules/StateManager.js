@@ -34,7 +34,8 @@ export class StateManager {
             visualizer: null,
             chaosMatrix: null,
             uiController: null,
-            voiceSynth: null
+            voiceSynth: null,
+            digitalCharacter: null
         };
 
         console.log("StateManager initialized");

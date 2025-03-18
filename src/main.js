@@ -7,7 +7,8 @@ import { VisualizerCore } from './modules/visualization/VisualizerCore.js';
 import { ChaosMatrix } from './modules/ChaosMatrix.js';
 import { UIController } from './modules/UIController.js';
 import { StateManager } from './modules/StateManager.js';
-import { VoiceSynth } from './modules/VoiceSynth.js'; // Add this import
+import { VoiceSynth } from './modules/VoiceSynth.js';
+import { DigitalCharacter } from './modules/DigitalCharacter.js'; // Import the new DigitalCharacter
 
 // Create a global audio debug function
 function addDebugFunction() {
@@ -15,6 +16,7 @@ function addDebugFunction() {
     const audioCore = window._audioCore;
     const oscillatorManager = window._oscillatorManager;
     const effectsChain = window._effectsChain;
+    const digitalCharacter = window._digitalCharacter;
 
     console.log('--- DETAILED AUDIO DEBUG ---');
 
@@ -47,6 +49,13 @@ function addDebugFunction() {
       console.log('Voice Synth:', voiceState.active ? 'Active' : 'Inactive');
       console.log('- Voice Type:', voiceState.voiceType);
       console.log('- Vowel Sequence:', voiceState.vowelSequence.join(', '));
+    }
+
+    // Check digital character
+    if (digitalCharacter) {
+      console.log('Digital Character:', digitalCharacter);
+      console.log('- Mood:', digitalCharacter.getCharacterMood());
+      console.log('- Interaction History:', digitalCharacter.interactionHistory);
     }
 
     // Test simple beep
@@ -99,6 +108,65 @@ function createDebugButton() {
   return debugButton;
 }
 
+// Modify the existing createGlitchText function to expose it globally
+function createGlitchText(text, options = {}) {
+  const overlay = document.getElementById('glitch-overlay');
+  if (!overlay) return;
+
+  const createGlitchElement = () => {
+    const glitchText = document.createElement('div');
+    glitchText.classList.add('glitch-text');
+
+    // If a specific style is passed, apply it
+    if (options.style) {
+      Object.keys(options.style).forEach(prop => {
+        glitchText.style[prop] = options.style[prop];
+      });
+    }
+
+    glitchText.textContent = text;
+
+    // Random positioning with optional constraints
+    glitchText.style.left = options.left || `${Math.random() * 90}%`;
+    glitchText.style.top = options.top || `${Math.random() * 90}%`;
+
+    // Random sizing
+    const fontSize = options.fontSize || Math.floor(Math.random() * 20 + 10);
+    glitchText.style.fontSize = `${fontSize}px`;
+
+    // Random animations
+    const animations = [
+      'glitch-animation-1',
+      'glitch-animation-2',
+      'glitch-flicker',
+      'terminal-flicker',
+      'glitch-skew'
+    ];
+
+    const randomAnimation = options.animation ||
+        animations[Math.floor(Math.random() * animations.length)];
+
+    const animationDuration = options.animationDuration ||
+        (Math.random() * 0.5 + 0.5);
+
+    glitchText.style.animation = `${randomAnimation} ${animationDuration}s infinite`;
+
+    overlay.appendChild(glitchText);
+
+    // Remove after a short time
+    setTimeout(() => {
+      overlay.removeChild(glitchText);
+    }, options.duration || 2000);
+  };
+}
+
+// Expose createGlitchText globally
+if (window) {
+  window.createGlitchText = createGlitchText;
+}
+
+// Rest of the main.js remains the same...
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Initializing Aphex Soundscape...');
@@ -114,13 +182,87 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize voice synth module
   const voiceSynth = new VoiceSynth(audioCore, oscillatorManager, modulationManager);
 
+  // Initialize visualizer
+  const visualizerCore = new VisualizerCore(
+      audioCore,
+      oscillatorManager,
+      modulationManager,
+      effectsChain,
+      chaosMatrix
+  );
+
+  // Initialize Digital Character with complete context
+  const digitalCharacter = new DigitalCharacter(
+      voiceSynth,
+      oscillatorManager,
+      effectsChain,
+      visualizerCore
+  );
+
+  // Add periodic glitch text generation tied to digital character
+  if (window._digitalCharacter) {
+    const digitalCharacter = window._digitalCharacter;
+
+    setInterval(() => {
+      // Determine text source based on character's current state
+      const mood = digitalCharacter.getCharacterMood();
+      const interactionHistory = digitalCharacter.interactionHistory;
+
+      let textSource;
+      let textOptions = {};
+
+      // Choose text based on interaction history and mood
+      if (interactionHistory.complexPatchCreation > 5) {
+        // Technical, nerdy comments
+        textSource = digitalCharacter._getRandomComment('techNerdComments');
+        textOptions = {
+          style: { color: '#00FF66' },
+          animation: 'terminal-flicker',
+          fontSize: 14
+        };
+      } else if (interactionHistory.experimentalTechniques > 3) {
+        // Scene references
+        textSource = digitalCharacter._getRandomComment('sceneReferences');
+        textOptions = {
+          style: { color: '#00FFAA' },
+          animation: 'glitch-animation-2',
+          fontSize: 16
+        };
+      } else if (interactionHistory.uniqueModulations > 2) {
+        // Production tips
+        textSource = digitalCharacter._getRandomComment('productionTips');
+        textOptions = {
+          style: { color: '#33FF33' },
+          animation: 'glitch-skew',
+          fontSize: 12
+        };
+      } else {
+        // Default to a random comment
+        const commentTypes = [
+          'techNerdComments',
+          'sceneReferences',
+          'productionTips'
+        ];
+        const randomType = commentTypes[Math.floor(Math.random() * commentTypes.length)];
+        textSource = digitalCharacter._getRandomComment(randomType);
+      }
+
+      // If we have a text source, create glitch text
+      if (textSource) {
+        createGlitchText(textSource, textOptions);
+      }
+    }, 10000); // Every 10 seconds
+  }
+
   // Add global references for debugging
   window._audioCore = audioCore;
   window._oscillatorManager = oscillatorManager;
   window._modulationManager = modulationManager;
   window._effectsChain = effectsChain;
   window._chaosMatrix = chaosMatrix;
-  window._voiceSynth = voiceSynth; // Add voice synth reference
+  window._voiceSynth = voiceSynth;
+  window._digitalCharacter = digitalCharacter;
+  window._visualizerCore = visualizerCore;
 
   // Add debug function
   addDebugFunction();
@@ -132,34 +274,32 @@ document.addEventListener('DOMContentLoaded', () => {
       modulationManager,
       effectsChain,
       chaosMatrix,
-      voiceSynth // Add voice synth to UI controller
+      voiceSynth
   );
 
-  // Initialize visualization after all modules
-  const visualizer = new VisualizerCore(audioCore, oscillatorManager, modulationManager, effectsChain, chaosMatrix);
-
-  // Register modules with state manager (optional for future enhancements)
+  // Register modules with state manager
   stateManager.registerModule('audioCore', audioCore);
   stateManager.registerModule('oscillatorManager', oscillatorManager);
   stateManager.registerModule('modulationManager', modulationManager);
   stateManager.registerModule('effectsChain', effectsChain);
-  stateManager.registerModule('visualizer', visualizer);
+  stateManager.registerModule('visualizer', visualizerCore);
   stateManager.registerModule('chaosMatrix', chaosMatrix);
   stateManager.registerModule('uiController', uiController);
-  stateManager.registerModule('voiceSynth', voiceSynth); // Register voice synth with state manager
+  stateManager.registerModule('voiceSynth', voiceSynth);
+  stateManager.registerModule('digitalCharacter', digitalCharacter);
 
   // Setup visualization toggle buttons
-  setupVisualizerToggles(visualizer);
+  setupVisualizerToggles(visualizerCore);
 
   // Initialize UI components
   chaosMatrix.initChaosMatrix();
-  visualizer.initVisualizer();
+  visualizerCore.initVisualizer();
   uiController.createLFOTargetSelectors();
   uiController.setupEventListeners();
 
   // Handle window resize for visualization
   window.addEventListener('resize', () => {
-    visualizer.handleResize();
+    visualizerCore.handleResize();
   });
 
   // Create and add debug button in development mode
@@ -173,7 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Chaos Matrix:', chaosMatrix);
     console.log('Voice Synth:', voiceSynth);
     console.log('UI Controller:', uiController);
-    console.log('Visualizer:', visualizer);
+    console.log('Visualizer:', visualizerCore);
+    console.log('Digital Character:', digitalCharacter);
     console.log('State Manager:', stateManager);
 
     const audioCtx = audioCore.getAudioContext();

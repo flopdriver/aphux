@@ -473,3 +473,110 @@ h1:hover {
   background-color: var(--accent-primary);
   box-shadow: 0 0 8px rgba(255, 0, 102, 0.5);
 }
+
+/* Glitch Overlay Styles */
+.glitch-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.glitch-text {
+  position: absolute;
+  font-family: 'Courier New', monospace;
+  color: #00FF00;
+  opacity: 0.7;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Additional glitch animations for overlay */
+@keyframes terminal-flicker {
+  0% {
+    text-shadow: 0.4389924193300864px 0 1px rgba(0,30,255,0.5), -0.4389924193300864px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  5% {
+    text-shadow: 2.7928974010788257px 0 1px rgba(0,30,255,0.5), -2.7928974010788257px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  10% {
+    text-shadow: 0.02956275843481219px 0 1px rgba(0,30,255,0.5), -0.02956275843481219px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  15% {
+    text-shadow: 0.40218650102976464px 0 1px rgba(0,30,255,0.5), -0.40218650102976464px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  20% {
+    text-shadow: 3.4794037899852017px 0 1px rgba(0,30,255,0.5), -3.4794037899852017px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  25% {
+    text-shadow: 1.6125630401524672px 0 1px rgba(0,30,255,0.5), -1.6125630401524672px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  30% {
+    text-shadow: 0.7015588993633555px 0 1px rgba(0,30,255,0.5), -0.7015588993633555px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  35% {
+    text-shadow: 3.896914047754229px 0 1px rgba(0,30,255,0.5), -3.896914047754229px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  40% {
+    text-shadow: 3.870195774986574px 0 1px rgba(0,30,255,0.5), -3.870195774986574px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  45% {
+    text-shadow: 2.231518953522581px 0 1px rgba(0,30,255,0.5), -2.231518953522581px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  50% {
+    text-shadow: 0.08084290099509868px 0 1px rgba(0,30,255,0.5), -0.08084290099509868px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  55% {
+    text-shadow: 2.3758461081350655px 0 1px rgba(0,30,255,0.5), -2.3758461081350655px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  60% {
+    text-shadow: 2.202193051050751px 0 1px rgba(0,30,255,0.5), -2.202193051050751px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  65% {
+    text-shadow: 2.9576531930447808px 0 1px rgba(0,30,255,0.5), -2.9576531930447808px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  70% {
+    text-shadow: 0.48876612850834136px 0 1px rgba(0,30,255,0.5), -0.48876612850834136px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  75% {
+    text-shadow: 1.8948491305757032px 0 1px rgba(0,30,255,0.5), -1.8948491305757032px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  80% {
+    text-shadow: 0.02956275843481219px 0 1px rgba(0,30,255,0.5), -0.02956275843481219px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  85% {
+    text-shadow: 0.400018025436833px 0 1px rgba(0,30,255,0.5), -0.400018025436833px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  90% {
+    text-shadow: 3.4630792078411257px 0 1px rgba(0,30,255,0.5), -3.4630792078411257px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  95% {
+    text-shadow: 2.7928974010788257px 0 1px rgba(0,30,255,0.5), -2.7928974010788257px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+  100% {
+    text-shadow: 2.736877093587816px 0 1px rgba(0,30,255,0.5), -2.736877093587816px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+  }
+}
+
+/* Scanline effect for extra retro feel */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+          linear-gradient(
+                  rgba(18, 18, 18, 0.15) 50%,
+                  transparent 50%
+          );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.1;
+}
