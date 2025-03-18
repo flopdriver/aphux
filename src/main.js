@@ -7,6 +7,7 @@ import { VisualizerCore } from './modules/visualization/VisualizerCore.js';
 import { ChaosMatrix } from './modules/ChaosMatrix.js';
 import { UIController } from './modules/UIController.js';
 import { StateManager } from './modules/StateManager.js';
+import { VoiceSynth } from './modules/VoiceSynth.js'; // Add this import
 
 // Create a global audio debug function
 function addDebugFunction() {
@@ -38,6 +39,15 @@ function addDebugFunction() {
     // Check filter
     const filter = effectsChain?.getFilter();
     console.log('Filter:', filter ? 'Created' : 'Missing', filter?.frequency.value);
+
+    // Check voice synth
+    const voiceSynth = window._voiceSynth;
+    if (voiceSynth) {
+      const voiceState = voiceSynth.getState();
+      console.log('Voice Synth:', voiceState.active ? 'Active' : 'Inactive');
+      console.log('- Voice Type:', voiceState.voiceType);
+      console.log('- Vowel Sequence:', voiceState.vowelSequence.join(', '));
+    }
 
     // Test simple beep
     if (audioCtx && audioCtx.state === 'running') {
@@ -101,12 +111,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const chaosMatrix = new ChaosMatrix(audioCore, oscillatorManager, effectsChain);
   const stateManager = new StateManager();
 
+  // Initialize voice synth module
+  const voiceSynth = new VoiceSynth(audioCore, oscillatorManager, modulationManager);
+
   // Add global references for debugging
   window._audioCore = audioCore;
   window._oscillatorManager = oscillatorManager;
   window._modulationManager = modulationManager;
   window._effectsChain = effectsChain;
   window._chaosMatrix = chaosMatrix;
+  window._voiceSynth = voiceSynth; // Add voice synth reference
 
   // Add debug function
   addDebugFunction();
@@ -117,7 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
       oscillatorManager,
       modulationManager,
       effectsChain,
-      chaosMatrix
+      chaosMatrix,
+      voiceSynth // Add voice synth to UI controller
   );
 
   // Initialize visualization after all modules
@@ -131,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
   stateManager.registerModule('visualizer', visualizer);
   stateManager.registerModule('chaosMatrix', chaosMatrix);
   stateManager.registerModule('uiController', uiController);
+  stateManager.registerModule('voiceSynth', voiceSynth); // Register voice synth with state manager
 
   // Setup visualization toggle buttons
   setupVisualizerToggles(visualizer);
@@ -155,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Modulation Manager:', modulationManager);
     console.log('Effects Chain:', effectsChain);
     console.log('Chaos Matrix:', chaosMatrix);
+    console.log('Voice Synth:', voiceSynth);
     console.log('UI Controller:', uiController);
     console.log('Visualizer:', visualizer);
     console.log('State Manager:', stateManager);

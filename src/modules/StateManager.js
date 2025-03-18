@@ -33,7 +33,8 @@ export class StateManager {
             effectsChain: null,
             visualizer: null,
             chaosMatrix: null,
-            uiController: null
+            uiController: null,
+            voiceSynth: null
         };
 
         console.log("StateManager initialized");

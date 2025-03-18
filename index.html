@@ -221,6 +221,79 @@
         <button id="save-preset-btn">SAVE PRESET</button>
       </div>
     </div>
+
+    <div class="panel voice">
+      <h2>Voice Synth</h2>
+      <div class="control-row">
+        <div class="control">
+          <label>Volume</label>
+          <input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" id="voice-volume">
+          <span class="value">50%</span>
+        </div>
+        <div class="switch-container">
+          <label class="switch">
+            <input type="checkbox" id="voice-active">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="control">
+          <label>Voice Type</label>
+          <div class="voice-type-selector">
+            <button data-voice="soprano" class="active">Soprano</button>
+            <button data-voice="alto">Alto</button>
+            <button data-voice="tenor">Tenor</button>
+            <button data-voice="bass">Bass</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="control">
+          <label>Vowel Sequence</label>
+          <div class="vowel-selector">
+            <button data-vowel="a" class="active">A</button>
+            <button data-vowel="e">E</button>
+            <button data-vowel="i">I</button>
+            <button data-vowel="o">O</button>
+            <button data-vowel="u">U</button>
+          </div>
+        </div>
+        <div class="switch-container">
+          <label class="switch">
+            <input type="checkbox" id="auto-vowel-change" checked>
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="control">
+          <label>Change Rate</label>
+          <input type="range" min="0.5" max="10" value="3" step="0.1" class="slider" id="vowel-change-rate">
+          <span class="value">3.0s</span>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="control">
+          <label>Vibrato</label>
+          <input type="range" min="0" max="15" value="6" step="0.1" class="slider" id="vibrato-rate">
+          <span class="value">6.0 Hz</span>
+        </div>
+        <div class="control">
+          <label>Depth</label>
+          <input type="range" min="0" max="0.5" value="0.2" step="0.01" class="slider" id="vibrato-depth">
+          <span class="value">20%</span>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <button id="harmonize-btn">HARMONIZE WITH OSCILLATORS</button>
+      </div>
+    </div>
   </div>
 </div>
 

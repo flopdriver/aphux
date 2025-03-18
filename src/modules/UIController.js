@@ -1,11 +1,12 @@
 // src/modules/UIController.js
 export class UIController {
-    constructor(audioCore, oscillatorManager, modulationManager, effectsChain, chaosMatrix) {
+    constructor(audioCore, oscillatorManager, modulationManager, effectsChain, chaosMatrix, voiceSynth) {
         this.audioCore = audioCore;
         this.oscillatorManager = oscillatorManager;
         this.modulationManager = modulationManager;
         this.effectsChain = effectsChain;
         this.chaosMatrix = chaosMatrix;
+        this.voiceSynth = voiceSynth;
 
         console.log("UIController initialized");
     }
@@ -100,6 +101,15 @@ export class UIController {
                     console.log("Starting oscillators and LFOs...");
                     this.oscillatorManager.startOscillators();
                     this.modulationManager.startLFOs();
+                    // Initialize voice synth if available
+                    if (this.voiceSynth) {
+                        console.log("Initializing voice synth...");
+                        this.voiceSynth.initVoiceSynth();
+
+                        // Setup voice synth controls
+                        this.setupVoiceSynthControls(this.voiceSynth);
+                    }
+
 
                     // Log connection status
                     console.log({
@@ -146,6 +156,11 @@ export class UIController {
             startButton.textContent = 'START AUDIO';
             stopButton.style.display = 'none';
             resetButton.style.display = 'none';
+
+            // Clean up voice synth if available
+            if (this.voiceSynth) {
+                this.voiceSynth.cleanup();
+            }
 
             // Reinitialize the modules
             location.reload(); // For simplicity, just reload the page
@@ -405,6 +420,11 @@ export class UIController {
                 this.chaosMatrix.savePreset();
             });
         }
+
+        // Setup voice synth controls if available
+        if (this.voiceSynth) {
+            this.setupVoiceSynthControls(this.voiceSynth);
+        }
     }
 
     // Reset UI controls to match state values
@@ -567,6 +587,11 @@ export class UIController {
             gridCells.forEach((cell, index) => {
                 cell.classList.toggle('active', chaosState.chaosMatrix[index]);
             });
+
+            // Reset voice synth controls if voice synth is available
+            if (this.voiceSynth) {
+                this.resetVoiceSynthUIControls(this.voiceSynth);
+            }
         } catch (e) {
             console.error("Error in resetUIControls:", e);
         }
@@ -701,6 +726,233 @@ export class UIController {
             button.style.backgroundColor = '';
             button.style.borderColor = '';
             button.style.color = '';
+        }
+    }
+
+    // Set up voice synth controls
+    setupVoiceSynthControls(voiceSynth) {
+
+
+        if (!voiceSynth) {
+            console.error('Voice synth not provided to UI controller');
+            return;
+        }
+
+        console.log("Setting up voice synth controls in UI");
+
+        // Check that UI elements exist
+        const voicePanel = document.querySelector('.panel.voice');
+        if (!voicePanel) {
+            console.error("Voice synth panel not found in the DOM. Make sure to add the HTML.");
+            return;
+        }
+
+        // Voice active toggle
+        const voiceActiveSwitch = document.getElementById('voice-active');
+        if (voiceActiveSwitch) {
+            voiceActiveSwitch.addEventListener('change', (event) => {
+                if (event.target.checked) {
+                    voiceSynth.start();
+                } else {
+                    voiceSynth.stop();
+                }
+            });
+        }
+
+        // Voice volume slider
+        const volumeSlider = document.getElementById('voice-volume');
+        if (volumeSlider) {
+            volumeSlider.addEventListener('input', (event) => {
+                const volume = parseFloat(event.target.value);
+                voiceSynth.setVolume(volume);
+
+                if (volumeSlider.nextElementSibling) {
+                    volumeSlider.nextElementSibling.textContent = `${(volume * 100).toFixed(0)}%`;
+                }
+            });
+        }
+
+        // Voice type selector
+        const voiceTypeButtons = document.querySelectorAll('.voice-type-selector button');
+        voiceTypeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const voiceType = button.getAttribute('data-voice');
+
+                // Update UI
+                voiceTypeButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Update voice synth
+                voiceSynth.changeVoiceType(voiceType);
+            });
+        });
+
+        // Vowel selector for sequence
+        const vowelButtons = document.querySelectorAll('.vowel-selector button');
+        let selectedVowels = ['a']; // Start with just 'a'
+
+        vowelButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const vowel = button.getAttribute('data-vowel');
+
+                // Toggle button state
+                button.classList.toggle('active');
+
+                // Update selected vowel array
+                if (button.classList.contains('active')) {
+                    if (!selectedVowels.includes(vowel)) {
+                        selectedVowels.push(vowel);
+                    }
+                } else {
+                    selectedVowels = selectedVowels.filter(v => v !== vowel);
+                    // Always keep at least one vowel
+                    if (selectedVowels.length === 0) {
+                        selectedVowels = ['a'];
+                        vowelButtons.forEach(btn => {
+                            if (btn.getAttribute('data-vowel') === 'a') {
+                                btn.classList.add('active');
+                            }
+                        });
+                    }
+                }
+
+                // Update voice synth
+                voiceSynth.setVowelSequence(selectedVowels);
+            });
+        });
+
+        // Auto vowel change toggle
+        const autoVowelToggle = document.getElementById('auto-vowel-change');
+        if (autoVowelToggle) {
+            autoVowelToggle.addEventListener('change', (event) => {
+                voiceSynth.setAutoVowelChange(event.target.checked);
+            });
+        }
+
+        // Vowel change rate slider
+        const rateSlider = document.getElementById('vowel-change-rate');
+        if (rateSlider) {
+            rateSlider.addEventListener('input', (event) => {
+                const rate = parseFloat(event.target.value);
+                voiceSynth.setVowelChangeRate(rate);
+
+                if (rateSlider.nextElementSibling) {
+                    rateSlider.nextElementSibling.textContent = `${rate.toFixed(1)}s`;
+                }
+            });
+        }
+
+        // Vibrato rate slider
+        const vibratoRateSlider = document.getElementById('vibrato-rate');
+        if (vibratoRateSlider) {
+            vibratoRateSlider.addEventListener('input', (event) => {
+                const rate = parseFloat(event.target.value);
+                const depth = parseFloat(document.getElementById('vibrato-depth').value);
+
+                // Update vibrato
+                voiceSynth.addVibrato(rate, depth);
+
+                if (vibratoRateSlider.nextElementSibling) {
+                    vibratoRateSlider.nextElementSibling.textContent = `${rate.toFixed(1)} Hz`;
+                }
+            });
+        }
+
+        // Vibrato depth slider
+        const vibratoDepthSlider = document.getElementById('vibrato-depth');
+        if (vibratoDepthSlider) {
+            vibratoDepthSlider.addEventListener('input', (event) => {
+                const depth = parseFloat(event.target.value);
+                const rate = parseFloat(document.getElementById('vibrato-rate').value);
+
+                // Update vibrato
+                voiceSynth.addVibrato(rate, depth);
+
+                if (vibratoDepthSlider.nextElementSibling) {
+                    vibratoDepthSlider.nextElementSibling.textContent = `${(depth * 100).toFixed(0)}%`;
+                }
+            });
+        }
+
+        // Harmonize button
+        const harmonizeBtn = document.getElementById('harmonize-btn');
+        if (harmonizeBtn) {
+            harmonizeBtn.addEventListener('click', () => {
+                voiceSynth.harmonizeWithOscillators();
+
+                // Update UI to match new settings
+                this.resetVoiceSynthUIControls(voiceSynth);
+            });
+        }
+
+        console.log("Voice synth UI controls setup complete");
+    }
+
+    // Reset voice synth UI controls based on voice synth state
+    resetVoiceSynthUIControls(voiceSynth) {
+        if (!voiceSynth) return;
+
+        const voiceState = voiceSynth.getState();
+
+        // Voice active switch
+        const voiceActiveSwitch = document.getElementById('voice-active');
+        if (voiceActiveSwitch) {
+            voiceActiveSwitch.checked = voiceState.active;
+        }
+
+        // Voice volume slider
+        const volumeSlider = document.getElementById('voice-volume');
+        if (volumeSlider) {
+            volumeSlider.value = voiceState.volume;
+            if (volumeSlider.nextElementSibling) {
+                volumeSlider.nextElementSibling.textContent = `${(voiceState.volume * 100).toFixed(0)}%`;
+            }
+        }
+
+        // Voice type buttons
+        const voiceTypeButtons = document.querySelectorAll('.voice-type-selector button');
+        voiceTypeButtons.forEach(button => {
+            button.classList.toggle('active', button.getAttribute('data-voice') === voiceState.voiceType);
+        });
+
+        // Vowel sequence buttons
+        const vowelButtons = document.querySelectorAll('.vowel-selector button');
+        vowelButtons.forEach(button => {
+            const vowel = button.getAttribute('data-vowel');
+            button.classList.toggle('active', voiceState.vowelSequence.includes(vowel));
+        });
+
+        // Auto vowel change toggle
+        const autoVowelToggle = document.getElementById('auto-vowel-change');
+        if (autoVowelToggle) {
+            autoVowelToggle.checked = voiceState.autoVowelChange;
+        }
+
+        // Vowel change rate slider
+        const rateSlider = document.getElementById('vowel-change-rate');
+        if (rateSlider) {
+            rateSlider.value = voiceState.vowelChangeRate;
+            if (rateSlider.nextElementSibling) {
+                rateSlider.nextElementSibling.textContent = `${voiceState.vowelChangeRate.toFixed(1)}s`;
+            }
+        }
+
+        // Vibrato rate slider
+        const vibratoRateSlider = document.getElementById('vibrato-rate');
+        if (vibratoRateSlider) {
+            vibratoRateSlider.value = voiceState.vibratoRate;
+            if (vibratoRateSlider.nextElementSibling) {
+                vibratoRateSlider.nextElementSibling.textContent = `${voiceState.vibratoRate.toFixed(1)} Hz`;
+            }
+        }
+
+        // Vibrato depth slider
+        const vibratoDepthSlider = document.getElementById('vibrato-depth');
+        if (vibratoDepthSlider) {
+            vibratoDepthSlider.value = voiceState.vibratoDepth;
+            if (vibratoDepthSlider.nextElementSibling) {
+                vibratoDepthSlider.nextElementSibling.textContent = `${(voiceState.vibratoDepth * 100).toFixed(0)}%`;
+            }
         }
     }
 }
